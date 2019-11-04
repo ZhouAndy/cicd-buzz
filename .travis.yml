@@ -3,6 +3,16 @@ sudo: required
 services:
   - docker
 
+env:
+  global:
+    # Docker Hub cannot handle uppercase characters in repository names. Fix it
+    # with a bashism as Travis CI cannot handle quoting within command
+    # substitution.
+    - LOWERCASE_REPO_SLUG="${TRAVIS_REPO_SLUG,,}"
+    - DOCKER_LOCAL="${LOWERCASE_REPO_SLUG}:${TRAVIS_COMMIT}"
+    - DOCKER_DEV_TAG="${LOWERCASE_REPO_SLUG}:develop"
+    - BUILD_HASH=$(echo "${TRAVIS_COMMIT}" | cut -c1-7)
+
 language: python
 
 script:
